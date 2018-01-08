@@ -50,6 +50,75 @@ Your library will reside in it's own module.
 ng g module libex
 ```
 
+or you can choose to generate your modules in `modules` folder:
+
+```
+ng g module modules/libex
+```
+
 ### Step 3: build your library module
 
-`cd` into the module folder, and create your library components and services.
+#### create `Header` component
+
+```
+ng g component libex/header
+```
+
+#### export your `Header` component
+
+```
+@NgModule({
+  imports: [
+    CommonModule
+  ],
+  declarations: [HeaderComponent],
+  exports: [HeaderComponent] // <-- this
+})
+export class LibexModule { 
+  static forRoot() {
+    return {
+      ngModule: LibexModule,
+      providers: []
+    };
+  }
+}
+```
+
+#### if you want to add singleton services
+
+```
+@NgModule({
+  providers: [ /* Don't add the services here */ ],
+  imports: [
+    CommonModule
+  ],
+  declarations: [HeaderComponent],
+  exports: [HeaderComponent]  
+})
+export class LibexModule {
+  static forRoot() {
+    return {
+      ngModule: LibexModule,
+      providers: [ SomeService ]
+    }
+  }
+}
+```
+
+and change the imports in AppModule to 
+
+```
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    LibexModule.forRoot() // <-- this
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
