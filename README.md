@@ -2,26 +2,54 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.3.
 
-## Development server
+# Publish Angular components/modules as a library
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## what is a good candidate for a library?
 
-## Code scaffolding
+Here are some questions you should ask yourself before deciding if a component or service is worthy of its own module:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+* Does this solve a common problem you encounter?
+* Have you written code like this before and find yourself writing it repeatedly?
+* Do you see other projects copy your application to use some of your components, and then modify it to remove the components they don't need?
+* Is this component something you or someone else will re-use on another project? (not `might` - **will** )
+* Could this be a simple building block to solving a larger issue?
+* Are these collections of components unique enough that they are almost their own project?
 
-## Build
+## can this be done with angular/cli?
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+At this point, angular/cli does not provide a straight forward way to build and test your Angular library
 
-## Running unit tests
+## what options exist
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Boils down to two options:
 
-## Running end-to-end tests
+1. A complicated option, that inlines CSS and HTML, compiles the sources, runs Rollup.js to build [UMD](https://github.com/umdjs/umd) and ES5 modules and does some other magic.
+2. A relatively simple setup that publishes TypeScript source files to npm.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+When should you use which method? If you're writing a module for the community, then you'll have to go with the complicated setup. 
+you will need to go and get a "library-generator". The best one I've found is https://github.com/jvandemo/generator-angular2-library, It sets up the complicated build pipeline for you and you don't have to understand exactly what it does, even though it helps, when need to troubleshoot. An example of a library build with that library generator would be http://spinner.tsmean.com. 
 
-## Further help
+You should use the simple(r) option if you want to use the library for your compoany internal purposes or you want to wait until there is an "official library generator".
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+### Step 1: Create a new project with the angular/cli
+
+This will be a wrapper and test consumer for your library module.
+
+```
+ng new libex-project --prefix libex
+```
+
+`libex` for "lib example".   "Prefix" is what you'll write in front of your components.
+
+### Step 2: create a new module
+
+Your library will reside in it's own module.
+
+```
+ng g module libex
+```
+
+### Step 3: build your library module
+
+`cd` into the module folder, and create your library components and services.
