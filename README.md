@@ -122,3 +122,68 @@ and change the imports in AppModule to
 export class AppModule { }
 
 ```
+
+#### header template
+
+```
+<h1>
+  <ng-content></ng-content>
+</h1>
+```
+
+use content injection to inject content from parent component (app.component) just for 
+demo purposes
+
+make `header.component.css` pretty: 
+
+```
+h1 {
+  color: red;
+}
+```
+  
+now add header to `app.component.html`
+
+```
+<libex-header>My Header</libex-header>  
+```
+
+We're `projecting` "My Header" into the `<ng-content></ng-content>` block.  
+
+
+### Step 4: Publish
+
+In your module folder, create a new package.json.
+You can do this with `npm init` command.
+It should look like:
+
+```
+{
+  "name": "libex",
+  "version": "1.0.16",
+  "description": "An Example Library.",
+      ...
+}
+```
+
+For the most part, only the library name matters.
+**Also rename `libex.module.ts` to `index.ts` since that's the standard name for a main file.**
+
+Since we're publishing the typescript sources, just run
+
+```
+npm publish
+```
+
+`.npmingore`
+
+you can also add this file so you publish only exactly what's needed.
+
+#### subsequent releases
+
+```
+npm version patch | minor | major
+npm publish
+```
+
+
