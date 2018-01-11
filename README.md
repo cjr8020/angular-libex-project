@@ -167,23 +167,77 @@ It should look like:
 ```
 
 For the most part, only the library name matters.
+
 **Also rename `libex.module.ts` to `index.ts` since that's the standard name for a main file.**
 
-Since we're publishing the typescript sources, just run
+
+#### publishing with `npm-link`
+
+With `npm-link` you create a symbolic link in your library consumer project to your library producer project
+simulating npm deployment.  It is a two-step process described well in [npmjs docs](https://docs.npmjs.com/cli/link)
+
+#### make angular-cli play nice with npm links
+
+either run 
+```
+  $ ng serve --preserve-symlinks
+```
+or update .angular-cli.json
+```
+  ...
+  "defaults": {
+    "styleExt": "scss",
+    "component": {},
+    "build": {
+      "preserveSymlinks": true
+    }
+  }
+```
+if you have symlinks in the source tree.
+
+Starting with Angular 5, you also need to include your linked library in `tsconfig.json`:
 
 ```
-npm publish
+  "include": [
+    "src/**/*",
+    "node_modules/your-library/index.ts",
+  ]
 ```
 
-`.npmingore`
 
-you can also add this file so you publish only exactly what's needed.
+## Misc. things that will need attention
 
-#### subsequent releases
+### environment
+
+environment imports like this will break in the host application using the library
 
 ```
-npm version patch | minor | major
-npm publish
+import {environment} from '../../../environments/environment';
+```
+Need to figure out a library mechanism that can locate the host app environment.
+
+### use webpack's sass-loader
+
+```
+@import "~bootstrap/scss/bootstrap-grid.scss";
+``` 
+rather than 
+
+```
+@import "../../../../node_modules/bootstrap/scss/bootstrap-grid.scss";
 ```
 
+### sass imports from other locations
+
+similar to environment imports, these things will break as well.
+
+```
+@import "../../../sass/some-variables";
+```
+
+So either need internalize them in the library, e.g.:
+```
+@import "../some-variables";
+```
+or come up with a different mechanism to locate the `sass` folder in the project `src` folder or elsewhere.
 
